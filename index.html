@@ -1,12 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0;url=http://152.136.175.56:12560">
-    <title>Redirecting</title>
-</head>
-<body>
-    <p>If you are not redirected automatically, click <a href="http://152.136.175.56:12560">here</a>.</p>
-</body>
-</html>
+            <!DOCTYPE html>
+            <html lang=""zh-CN"">
+            <head>
+            <meta charset=""UTF-8"">
+            <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+            <title>消息发送器</title>
+            <script>
+                async function sendMessage() {
+                    const message = document.getElementById('messageInput').value;
+                    const response = await fetch('http://152.136.175.56:12560/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'text/plain'
+                        },
+                        body: message
+                    });
+                    const result = await response.text();
+                    alert(result);
+                    document.getElementById('messageInput').value = '';
+                }
+            </script>
+            </head>
+            <body>
+                <label for=""messageInput"">消息:</label>
+                <input type=""text"" id=""messageInput"" name=""message"">
+                <button onclick=""sendMessage()"">提交</button>
+            </body>
+            </html>
