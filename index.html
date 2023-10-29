@@ -1,28 +1,51 @@
-            <!DOCTYPE html>
-            <html lang=""zh-CN"">
-            <head>
-            <meta charset=""UTF-8"">
-            <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-            <title>消息发送器</title>
-            <script>
-                async function sendMessage() {
-                    const message = document.getElementById('messageInput').value;
-                    const response = await fetch('http://152.136.175.56:12561/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'text/plain'
-                        },
-                        body: message
-                    });
-                    const result = await response.text();
-                    alert(result);
-                    document.getElementById('messageInput').value = '';
-                }
-            </script>
-            </head>
-            <body>
-                <label for=""messageInput"">消息:</label>
-                <input type=""text"" id=""messageInput"" name=""message"">
-                <button onclick=""sendMessage()"">提交</button>
-            </body>
-            </html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>消息发送器</title>
+<script>
+    let ws;
+
+    function connectWebSocket() {
+        // 创建一个 WebSocket 连接
+        ws = new WebSocket('ws://152.136.175.56:12560');
+
+        // 设置 WebSocket 事件处理器
+        ws.onopen = function(event) {
+            console.log('WebSocket 连接已打开');
+        };
+
+        ws.onmessage = function(event) {
+            alert(event.data);  // 显示从服务器接收到的消息
+        };
+
+        ws.onclose = function(event) {
+            console.log('WebSocket 连接已关闭');
+        };
+
+        ws.onerror = function(event) {
+            console.error('WebSocket 错误:', event);
+        };
+    }
+
+    function sendMessage() {
+        const message = document.getElementById('messageInput').value;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(message);  // 通过 WebSocket 发送消息
+            document.getElementById('messageInput').value = '';
+        } else {
+            console.error('WebSocket 连接未打开');
+        }
+    }
+
+    // 在页面加载时连接 WebSocket
+    window.onload = connectWebSocket;
+</script>
+</head>
+<body>
+    <label for="messageInput">消息:</label>
+    <input type="text" id="messageInput" name="message">
+    <button onclick="sendMessage()">提交</button>
+</body>
+</html>
